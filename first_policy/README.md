@@ -23,7 +23,7 @@ Entry{
 Notice that, the ***Entry*** keyword actually represents a function, which takes a table as input, and can do some useful work, such as statistics, verification, etc. In addition, a ***group*** can be defined as follows:
 
 ```
-group2 = {                                                                      
+group1 = {                                                                      
   [TCP] = {                                                                 
     [PKT_IN] = {                                                      
       [11371]   = true,                                                   
