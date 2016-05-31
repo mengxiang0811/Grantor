@@ -12,7 +12,7 @@ Entry{
   --you can customize the parameters here:
   --[[
       ["params"] = {
-        limit = "100 kbps",
+        limit = "100 KB",
         expire = "5 min",
         action = "ACCEPT",
       },
@@ -43,7 +43,7 @@ group1 = {
   },
   
   ["params"] = {                                                              
-     limit = "15 kbps",                                                      
+     limit = "15 KB",                                                      
      expire = "80 sec",                                                      
      action = "ACCEPT",                                                      
   },                                                                          

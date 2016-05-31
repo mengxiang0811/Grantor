@@ -27,7 +27,7 @@ default_setting = {
     prefix_len = 0,
     group = 255,
     params = {
-        limit = "5 kbps",
+        limit = "5 KB",
         expire = "60 sec",
         action = "DENY",
     }
@@ -56,7 +56,7 @@ group1 = {
     },
 
     ["params"] = {
-        limit = "10 kbps",
+        limit = "10 KB",
         expire = "60 sec",
         action = "ACCEPT",
     },
@@ -70,7 +70,7 @@ group2 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -97,7 +97,7 @@ group3 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -116,7 +116,7 @@ group4 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -142,7 +142,7 @@ group5 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -184,7 +184,7 @@ group6 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -202,7 +202,7 @@ group7 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -222,7 +222,7 @@ group8 = {
     },
 
     ["params"] = {
-        limit = "15 kbps",
+        limit = "15 KB",
         expire = "80 sec",
         action = "ACCEPT",
     },
@@ -246,7 +246,7 @@ Entry{
     --you can customize the parameters here:
     --[[
         ["params"] = {
-            limit = "100 kbps",
+            limit = "100 KB",
             expire = "5 min",
             action = "ACCEPT",
         },
