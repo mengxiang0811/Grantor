@@ -1,0 +1,305 @@
+--[[
+    This file defines the policies for Grantor
+
+    General Format of Policies should be:
+        xxx
+    
+    Here, I assume that each group has specific capability parameters, 
+    including speed limit, expiration time, actions - DENY or ACCEPT, etc.
+
+    Of course, you can also specify the parameters for each Destination addr.
+--]]
+
+--Destination addresses and List of (protocol, port) pairs
+
+--Protocol number
+TCP = 6
+UDP = 17
+
+PKT_IN = 0
+PKT_OUT = 1
+
+default_setting = {
+    ip = "*",
+    prefix_len = 0,
+    group = 255,
+    params = {
+        limit = "5 kbps",
+        expire = "60 sec",
+        action = "DENY",
+    }
+}
+
+group1 = {
+    [TCP] = {
+        [PKT_IN] = {
+            [22]      = true,
+            [80]      = true,
+            [443]     = true,
+            [43]      = true,
+            [700]     = true,
+            [5672]    = true,
+            [25672]   = true,
+            [4369]    = true,
+            [11371]   = true,
+        },
+    },
+
+    [UDP] = {
+        [PKT_IN] = {
+            [1194]    = true,
+            [694]     = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "10 kbps",
+        expire = "60 sec",
+        action = "ACCEPT",
+    },
+}
+
+group2 = {
+    [TCP] = { 
+        [PKT_OUT] = { 
+            [11371]   = true
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group3 = {
+    [TCP] = {
+        [PKT_IN] = {
+            [143] = true,
+            [993] = true,
+            [110] = true,
+            [995] = true,
+        },
+
+        [PKT_OUT] = {
+            [11371] = true,
+        },
+    },
+
+    [UDP] = {
+        [PKT_IN] = {
+            [694] = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group4 = {
+    [TCP] = {
+        [PKT_IN] = {
+            [80] = true,
+            [5672] = true,
+        },
+
+        [PKT_OUT] = {
+            [11371] = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group5 = {
+    [TCP] = {
+        [PKT_IN] = {
+            [25] = true,
+            [587] = true,
+            [4369] = true,
+        },
+
+        [PKT_OUT] = {
+            [11371] = true,
+        },
+    },
+
+    [UDP] = {
+        [PKT_OUT] = {
+            [24441] = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group6 = {
+    [TCP] = {
+        [PKT_IN] = {
+            [80] = true,
+            [443] = true,
+            [21] = true,
+            [22] = true,
+            [5672] = true,
+            [25672] = true,
+            [4369] = true,
+            [3306] = true,
+        },
+
+        [PKT_OUT] = {
+            [20] = true,
+            [21] = true,
+            [80] = true,
+            [443] = true,
+            [143] = true,
+            [993] = true,
+            [110] = true,
+            [995] = true,
+            [43] = true,
+            [25] = true,
+            [587] = true,
+            [5672] = true,
+            [11371] = true,
+            [465] = true,
+            [873] = true,
+            [2195] = true,
+            [8080] = true,
+            [8084] = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group7 = {
+    [TCP] = { 
+        [PKT_IN] = {
+            [3306] = true,
+        },
+        
+        [PKT_OUT] = { 
+            [11371]   = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+group8 = {
+    [TCP] = { 
+        [PKT_IN] = {
+            [80] = true,
+            [443] = true,
+            [21] = true,
+        },
+        
+        [PKT_OUT] = { 
+            ["*"]   = true,
+        },
+    },
+
+    ["params"] = {
+        limit = "15 kbps",
+        expire = "80 sec",
+        action = "ACCEPT",
+    },
+}
+
+groups = {
+    group1,
+    group2,
+    group3,
+    group4,
+    group5,
+    group6,
+    group7,
+    group8,
+}
+
+Entry{
+    ip = "187.73.32.0",
+    prefix_len = 27,
+    group = 1,
+    --you can customize the parameters here:
+    --[[
+        ["params"] = {
+            limit = "100 kbps",
+            expire = "5 min",
+            action = "ACCEPT",
+        },
+    --]]
+}
+
+Entry{
+    ip = "187.73.32.32",
+    prefix_len = 28,
+    group = 2,
+}
+
+Entry{
+    ip = "187.73.32.72",
+    prefix_len = 29,
+    group = 3,
+}
+
+Entry{
+    ip = "187.73.33.192",
+       prefix_len = 28,
+       group = 3,
+}
+
+Entry{
+    ip = "187.73.32.80",
+       prefix_len = 28,
+       group = 4,
+}
+
+Entry{
+    ip = "187.73.32.128",
+       prefix_len = 25,
+       group = 5,
+}
+
+Entry{
+    ip = "187.73.33.0",
+       prefix_len = 25,
+       group = 6,
+}
+
+Entry{
+    ip = "187.73.33.128",
+       prefix_len = 26,
+       group = 7,
+}
+
+Entry{
+    ip = "187.73.33.208",
+       prefix_len = 28,
+       group = 8,
+}
+
+Entry{
+    ip = "187.73.33.224",
+       prefix_len = 27,
+       group = 8,
+}
