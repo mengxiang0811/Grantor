@@ -1,6 +1,6 @@
 #First policy
 
-The policies are organized by using ***table*** data structure in Lua.
+The policies are organized by using ***table*** data structure in Lua. All the very first policy has to do is to check incoming packets against this table, and *accept the capability request if the destination address, protocol, and destination port are present in the table, or reject otherwise*. Given that capabilities also establish bandwidth limits, we will support a bandwidth limit to each pair, although we may initially use a single limit for all pairs.
 
 ##Policy Format
 
