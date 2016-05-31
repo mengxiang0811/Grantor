@@ -1,6 +1,9 @@
 --[[
-    This file defines the policies for Grantor
+    This file defines the first policies for Grantor, i.e., the exhaustive list 
+    of the services in the network segment 187.73.32.0/22
+--]]
 
+--[[
     General Format of Policies should be:
         xxx
     
