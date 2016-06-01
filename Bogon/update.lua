@@ -117,8 +117,8 @@ while true do
 
         last_time = os.date("*t", os.time())
         order =  order + 1
-    elseif order <= 4 then
-        --elseif cur_time.hour - last_time.hour > 4 then
+    --elseif order <= 4 then
+    elseif order <= 4 and cur_time.hour - last_time.hour > 4 then
         fetch_files(directory, order)
         --update the last download time
         last_time = os.date("*t", os.time())
