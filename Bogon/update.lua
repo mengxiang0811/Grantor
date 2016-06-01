@@ -64,7 +64,7 @@ end
 
 local function fetch_files(folder, index)
     --invalid index
-    if ((index < 1) or (index > 4)) then
+    if ((index < 1) or (index > 6)) then
         return
     else 
 
@@ -98,9 +98,10 @@ local directory
 local order = 1
 local last_time = os.date("*t", os.time())
 local cur_time = os.date("*t", os.time())
-local sleep_time = 3 * 60 * 60 -- seconds for 3 hours
+local sleep_time = 2 * 60 * 60 -- seconds for 2 hours
 
---Download 4 times per day
+--Updated every four hours.
+--Download 6 times per day
 while true do
 
     --current time
@@ -118,7 +119,7 @@ while true do
         last_time = os.date("*t", os.time())
         order =  order + 1
     --elseif order <= 4 then
-    elseif order <= 4 and cur_time.hour - last_time.hour > 4 then
+    elseif order <= 6 and cur_time.hour - last_time.hour > 4 then
         fetch_files(directory, order)
         --update the last download time
         last_time = os.date("*t", os.time())
