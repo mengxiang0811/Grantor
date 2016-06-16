@@ -11,8 +11,6 @@ local group1 = {
 
 local group2 = {
     ["params"] = {
-        limit = "15 KB",
-        expire = "80 sec",
         action = "ACCEPT",
     },
 }

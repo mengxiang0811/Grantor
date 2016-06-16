@@ -1,9 +1,13 @@
---To add a new task for maintaining a filtering list
+--To add a new task for maintaining the bogon filtering list
 
-local URL_CONFIG_MODULE = {}
+package.path = package.path .. ";/Users/mengxiang/Documents/XIA/DDoS-system/Grantor/template/Common/?.lua;"
+--print(package.path)
+
+local libconfig = require "libconfig"
 
 local bogon_filter_list = {
     ["name"] = "Bogon",
+    ["ref"] = "http://www.team-cymru.org/bogon-reference.html",
     ["urls"] = {
         --The Text Bogon List, Unaggregated
         {
@@ -51,40 +55,4 @@ local bogon_filter_list = {
     },
 }
 
-local spamhaus_drop_all_traffic_advisory = {
-    ["name"] = "Spamhaus’ drop-all-traffic advisory",
-    ["urls"] = {
-        --The Spamhaus DROP (Don't Route Or Peer) lists
-        {
-            ["link"] = "https://www.spamhaus.org/drop/drop.txt",
-            ["interval"] = 1,
-            ["group"] = 1,
-            ["parser"] = "spamhaus",
-            ["state"] = "used",
-            ["desc"] = [[The Spamhaus DROP (Don't Route Or Peer) lists are advisory "drop all traffic" lists, consisting of netblocks that are "hijacked" or leased by professional spam or cyber-crime operations (used for dissemination of malware, trojan downloaders, botnet controllers).
-            ]],
-        },
-
-        --Spamhaus Extended DROP List (EDROP)
-        {
-            ["link"] = "https://www.spamhaus.org/drop/edrop.txt",
-            ["interval"] = 1,
-            ["group"] = 1,
-            ["parser"] = "spamhaus",
-            ["state"] = "unused",
-            ["desc"] = [[EDROP is an extension of the DROP list that includes suballocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.]],
-        },
-    },
-}
-
-local URLs = {
-    spamhaus_drop_all_traffic_advisory,
-    bogon_filter_list,
-}
-
-function URL_CONFIG_MODULE.init()
-    local effective_urls = {}
-    return effective_urls
-end
-
-return URL_CONFIG_MODULE
+libconfig.print_url_config(bogon_filter_list)
