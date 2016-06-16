@@ -21,7 +21,7 @@ function LIBCONFIG_MODULE.print_url_config(url_config)
     for idx, url in pairs(url_tbl) do
         print("\t############URL " .. idx .. "############")
         print("\tURL: " .. url["link"])
-        print("\tUpdate interval: " .. url["interval"] .. " hour/update")
+        print("\tUpdate interval: " .. url["interval"] .. " hour(s)/update")
         print("\tPolicy group: " .. url["group"])
         print("\tPolicy parser: " .. url["parser"])
         print("\tPolicy state: " .. url["state"])
@@ -39,6 +39,21 @@ function LIBCONFIG_MODULE.get_effective_urls(url_config)
         print("Error: an empty url configuration!")
         return effective_urls
     end
+
+    effective_urls["name"] = url_config["name"]
+    effective_urls["ref"] = url_config["ref"]
+
+    local url_tbl = url_config["urls"]
+
+    local eut = {}
+
+    for idx, url in pairs(url_tbl) do
+        if url["state"] == "used" then
+            eut[#eut + 1] = url_tbl[idx]
+        end
+    end
+
+    effective_urls["urls"] = eut
 
     return effective_urls
 

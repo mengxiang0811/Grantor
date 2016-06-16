@@ -56,3 +56,5 @@ local bogon_filter_list = {
 }
 
 libconfig.print_url_config(bogon_filter_list)
+local bogon_config = libconfig.get_effective_urls(bogon_filter_list)
+libconfig.print_url_config(bogon_config)

@@ -52,3 +52,5 @@ local spamhaus_drop_all_traffic_advisory = {
 }
 
 libconfig.print_url_config(spamhaus_drop_all_traffic_advisory)
+local spamhaus_config = libconfig.get_effective_urls(spamhaus_drop_all_traffic_advisory)
+libconfig.print_url_config(spamhaus_config)

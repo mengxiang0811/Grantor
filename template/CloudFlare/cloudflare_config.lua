@@ -31,3 +31,5 @@ local CloudFlare_ips = {
 }
 
 libconfig.print_url_config(CloudFlare_ips)
+local cloudflare_config = libconfig.get_effective_urls(CloudFlare_ips)
+libconfig.print_url_config(cloudflare_config)
