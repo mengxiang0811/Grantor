@@ -6,7 +6,7 @@ local LIBURLOP_MODULE = {}
 
 local socket = require("socket")
 local http = require("socket.http")
-local parser = require("libparser")
+local parser = require("liblpm_parser")
 
 --parser to parse LPM rules
 local default_parser = "default_ipv4_parser"

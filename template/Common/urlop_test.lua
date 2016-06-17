@@ -1,6 +1,6 @@
 package.path = package.path .. ";/Users/mengxiang/Documents/XIA/DDoS-system/Grantor/template/Common/?.lua;"
 
-local urlop = require "liburlop"
+local urlop = require "liburl_ops"
 local bogon_url = "http://www.team-cymru.org/Services/Bogons/bogon-bn-agg.txt"
 local spamhaus_url = "https://www.spamhaus.org/drop/drop.txt"
 

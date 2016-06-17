@@ -21,8 +21,10 @@ local groups = {
 }
 
 function GROUP_CONFIG_MODULE.init()
+    local standard_groups = {}
+    --local standard_groups = groups
     --TODO: translate the bandwidth limit and expiration time to standard units
-    return groups
+    return standard_groups
 end
 
 return GROUP_CONFIG_MODULE

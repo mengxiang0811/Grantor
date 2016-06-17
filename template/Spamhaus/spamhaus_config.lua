@@ -2,7 +2,7 @@
 
 package.path = package.path .. ";/Users/mengxiang/Documents/XIA/DDoS-system/Grantor/template/Common/?.lua;"
 
-local libconfig = require "libconfig"
+local libconfig = require "libpolicy_config"
 
 local spamhaus_drop_all_traffic_advisory = {
     ["name"] = "Spamhaus’ drop-all-traffic advisory",
@@ -55,6 +55,6 @@ local spamhaus_drop_all_traffic_advisory = {
     },
 }
 
-libconfig.print_url_config(spamhaus_drop_all_traffic_advisory)
-local spamhaus_config = libconfig.get_effective_urls(spamhaus_drop_all_traffic_advisory)
-libconfig.print_url_config(spamhaus_config)
+libconfig.print_policy_config(spamhaus_drop_all_traffic_advisory)
+local spamhaus_config = libconfig.get_effective_policy(spamhaus_drop_all_traffic_advisory)
+libconfig.print_policy_config(spamhaus_config)

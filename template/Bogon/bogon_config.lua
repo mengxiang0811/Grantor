@@ -3,7 +3,7 @@
 package.path = package.path .. ";/Users/mengxiang/Documents/XIA/DDoS-system/Grantor/template/Common/?.lua;"
 --print(package.path)
 
-local libconfig = require "libconfig"
+local libconfig = require "libpolicy_config"
 
 local bogon_filter_list = {
     ["name"] = "Bogon",
@@ -59,6 +59,6 @@ local bogon_filter_list = {
     },
 }
 
-libconfig.print_url_config(bogon_filter_list)
-local bogon_config = libconfig.get_effective_urls(bogon_filter_list)
-libconfig.print_url_config(bogon_config)
+libconfig.print_policy_config(bogon_filter_list)
+local bogon_config = libconfig.get_effective_policy(bogon_filter_list)
+libconfig.print_policy_config(bogon_config)

@@ -2,7 +2,7 @@
 
 package.path = package.path .. ";/Users/mengxiang/Documents/XIA/DDoS-system/Grantor/template/Common/?.lua;"
 
-local libconfig = require "libconfig"
+local libconfig = require "libpolicy_config"
 
 local CloudFlare_ips = {
     ["name"] = "CloudFlare IP addresses",
@@ -32,6 +32,6 @@ local CloudFlare_ips = {
     },
 }
 
-libconfig.print_url_config(CloudFlare_ips)
-local cloudflare_config = libconfig.get_effective_urls(CloudFlare_ips)
-libconfig.print_url_config(cloudflare_config)
+libconfig.print_policy_config(CloudFlare_ips)
+local cloudflare_config = libconfig.get_effective_policy(CloudFlare_ips)
+libconfig.print_policy_config(cloudflare_config)
