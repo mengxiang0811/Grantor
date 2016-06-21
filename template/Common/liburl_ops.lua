@@ -98,11 +98,12 @@ function LIBURLOP_MODULE.rules2file(rules, file)
     for i,v in pairs(rules) do
 
         if i ~= "group" and i ~= "proto" then
-            f:write("Entry_" .. rules["proto"] .. "{\n")
-            f:write("\t['raw']\t=\t" .. v["raw"] .. ",\n")
-            f:write("\t['ip']\t=\t" .. v["ip"] .. ",\n")
-            f:write("\t['prefix']\t=\t" .. v["prefix"] .. ",\n")
-            f:write("\t['nh']\t=\t" .. rules["group"] .. ",\n}\n")
+            f:write("Entry{\n")
+            f:write("\t[\"proto\"]\t=\t\"" .. rules["proto"] .. "\",\n")
+            f:write("\t[\"raw\"]\t=\t\"" .. v["raw"] .. "\",\n")
+            f:write("\t[\"ip\"]\t=\t" .. v["ip"] .. ",\n")
+            f:write("\t[\"prefix\"]\t=\t" .. v["prefix"] .. ",\n")
+            f:write("\t[\"nh\"]\t=\t" .. rules["group"] .. ",\n}\n")
             f:write("\n")
         end
     end
