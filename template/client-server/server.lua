@@ -21,7 +21,11 @@ print("Waiting connection from talker on " .. i .. ":" .. p .. "...")
 
 c = assert(s:accept())
 
-print("Connected. Here is the stuff:")
+print("Connected: accept a client!")
+
+l, e = c:receive()
+
+print("Begin to receive file: " .. l .. "\n")
 
 local f = io.open("test.txt", "wb")
 
@@ -41,3 +45,4 @@ end
 c:close()
 f:close()
 print(e)
+s:close()

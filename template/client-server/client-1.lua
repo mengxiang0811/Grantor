@@ -36,7 +36,9 @@ c = assert(socket.connect(host, port))
 print("Connected!")
 print("Send file: bogon-bn-agg.rule")
 
-c:send("bogon-bn-agg.rule\n")
+c:send(0 .. " " .. 17 .. " bogon-bn-agg.rule\n")
+
+c:send(1 .. " " .. 1600 .. " bogon-bn-agg.rule\n")
 
 lines = lines_from("./bogon-bn-agg.rule")
 

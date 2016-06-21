@@ -1,2 +1,2 @@
-dofile("bogon-bn-agg.rule")
-dofile("random.rule")
+dofile("./rules/bogon-bn-agg.rule")
+dofile("./rules/random.rule")
