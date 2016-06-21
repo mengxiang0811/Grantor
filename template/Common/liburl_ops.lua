@@ -6,6 +6,8 @@ local LIBURLOP_MODULE = {}
 
 local socket = require("socket")
 local http = require("socket.http")
+--TODO: need to support https
+--local https = require("ssl.https")
 local parser = require("liblpm_parser")
 
 --parser to parse LPM rules
@@ -29,6 +31,7 @@ local function check_params(url, file)
 end
 
 --retrieve the content of a URL
+--save the content to file
 function LIBURLOP_MODULE.url2file(url, file)
 
     local ret = check_params(url, file)
@@ -39,6 +42,7 @@ function LIBURLOP_MODULE.url2file(url, file)
 
     print("--->>> Processing url: " .. url)
 
+    --TODO: need to support https
     local body, code, headers = http.request(url)
 
     if code ~= 200 then
@@ -80,6 +84,30 @@ function LIBURLOP_MODULE.print_parsed_rules(rules)
         end
     end
 
+end
+
+--RETURN VALUE: the #rules written into the file
+function LIBURLOP_MODULE.rules2file(rules, file)
+
+    if rules == nil or file == nil or file == "" then
+        return 0
+    end
+    -- save the content to a file
+    local f = assert(io.open(file, 'wb')) -- open in "binary" mode
+    
+    for i,v in pairs(rules) do
+
+        if i ~= "group" and i ~= "proto" then
+            f:write("Entry_" .. rules["proto"] .. "{\n")
+            f:write("\t['raw']\t=\t" .. v["raw"] .. ",\n")
+            f:write("\t['ip']\t=\t" .. v["ip"] .. ",\n")
+            f:write("\t['prefix']\t=\t" .. v["prefix"] .. ",\n")
+            f:write("\t['nh']\t=\t" .. rules["group"] .. ",\n}\n")
+            f:write("\n")
+        end
+    end
+
+    f:close()
 end
 
 return LIBURLOP_MODULE

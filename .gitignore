@@ -1,1 +1,5 @@
 *.txt
+*.rule
+*.raw
+*/raw/
+*/rule/

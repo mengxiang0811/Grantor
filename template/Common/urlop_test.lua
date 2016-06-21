@@ -8,7 +8,7 @@ local spamhaus_url = "https://www.spamhaus.org/drop/drop.txt"
 local content = urlop.url2file(bogon_url, "bogon.txt")
 local bogon_rules = urlop.parse(content, "default_ipv4_parser", 1)
 urlop.print_parsed_rules(bogon_rules)
-
+urlop.rules2file(bogon_rules, "bogon-format.data")
 --spamhaus list from file
 urlop.url2file(spamhaus_url, "drop.txt")
 local spamhaus_rules = urlop.parse("drop.txt", "default_ipv4_parser_from_file", 1)
