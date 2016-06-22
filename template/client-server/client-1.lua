@@ -34,18 +34,32 @@ print("Attempting connection to host '" ..host.. "' and port " ..port.. "...")
 c = assert(socket.connect(host, port))
 
 print("Connected!")
-print("Send file: bogon-bn-agg.rule")
 
 c:setoption("tcp-nodelay", true)
 
-local filename = "bogon-bn-agg.rule"
-
-assert(c:send(0 .. " " .. #filename .. " " .. filename .. "\n"))
-
+cmd_id = 0
+len = 0
+--setup the connection
+assert(c:send(cmd_id .. " " .. len .. "\n"))
 l, e = c:receive()
-
 print(l)
 
+print("Send file: bogon-bn-agg.rule")
+local filename = "bogon-bn-agg.rule"
+
+--send filename control information
+cmd_id = 2
+len = #filename
+assert(c:send(cmd_id .. " " .. len .. "\n"))
+l, e = c:receive()
+print(l)
+
+--send filename
+assert(c:send(filename))
+l, e = c:receive()
+print(l)
+
+print("Read file ...")
 lines = lines_from("./bogon-bn-agg.rule")
 
 --c:send(1 .. " " .. #lines .. "\n")
@@ -58,10 +72,12 @@ for k,v in pairs(lines) do
 end
 
 print("Notify the server the length of the content!")
-assert(c:send(1 .. " " .. length .. "\n"))
 
+--send file data control information
+cmd_id = 3
+len = length
+assert(c:send(cmd_id .. " " .. len .. "\n"))
 l, e = c:receive()
-
 print(l)
 
 --[[
@@ -73,13 +89,19 @@ end
 --]]
 
 print("Begin to send content!!!")
+
+--send file data
 assert(c:send(content))
+l, e = c:receive()
+print(l)
+
 
 print("Close the connection!!!")
-assert(c:send(2 .. "\n"))
-
+--terminate the connection
+cmd_id = 1
+len = 0
+assert(c:send(cmd_id .. " " .. len .. "\n"))
 l, e = c:receive()
-
 print(l)
 
 c:close()
