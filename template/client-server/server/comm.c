@@ -154,6 +154,18 @@ int connection_terminate_directly(int sockfd) {
     return 0;
 }
 
+int connection_setup_init() {
+    return 0;
+}
+
+int connection_terminate_init() {
+    return 0;
+}
+
+int connection_terminate_directly_init() {
+    return 0;
+}
+
 void common_init() {
     int i = 0;
 

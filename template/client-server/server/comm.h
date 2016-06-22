@@ -1,12 +1,25 @@
 #ifndef __COMMON_H
 #define __COMMON_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <time.h> 
 #include <stdint.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#define RCV_SUCC    0
+#define RCV_ERROR   1
+#define RCV_DISCON  2
+
+#define BUFF_MAX 1024
+#define PAYLOAD_MAX (1024 * 1024)
+
+typedef int (*handler_func_init)(void);
+typedef int (*handler_func)( int );
 
 /*
  * interactive configuration (IC)
@@ -47,6 +60,14 @@ struct ic_reply {
     char     *info;
 };
 
+static char *COMPONENT_NAME_MAPPING[CMD_MAX + 1] = {
+    "Connection Setup Component",
+    "Connection Termination Component",
+    "LPM Filename Exchange Component",
+    "LPM Data Transfer Component",
+    "Close Connection Anyway!",
+};
+
 static char *IC_OK_MSG[CMD_MAX * 2] = {
     /* for control message transfer */
     "200 OK: Connection Established\n",
@@ -69,5 +90,19 @@ static char *IC_ERROR_MSG[CMD_MAX + 2] = {
     "405 ERROR: Not Defined Command\n", //CMD_MAX
     "406 ERROR: Cannot Receive Message\n", //CMD_MAX + 1
 };
+
+void common_init();
+
+int receive_ctrl_msg(int sockfd, int expected_cmd);
+int receive_data_msg(int sockfd, int data_len);
+
+int connection_setup_init();
+int connection_setup(int sockfd);
+
+int connection_terminate_init();
+int connection_terminate(int sockfd);
+
+int connection_terminate_directly_init();
+int connection_terminate_directly(int sockfd);
 
 #endif

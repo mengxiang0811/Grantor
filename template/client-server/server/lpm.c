@@ -2,6 +2,14 @@
 
 extern struct ic_request    req;
 
+int get_lpm_rule_fname_init() {
+    return 0;
+}
+
+int get_lpm_rule_data_init() {
+    return 0;
+}
+
 int get_lpm_rule_fname(int sockfd) {
     return receive_data_msg(sockfd, req.length);
 }
