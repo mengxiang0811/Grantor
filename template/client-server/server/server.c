@@ -65,14 +65,14 @@ int main(int argc, char *argv[]) {
             if (ret < 0)
                 break;
 
+            if (req.cmd_id == CONN_TERM_CMD)
+                goto CONN_TERM_DIRECT;
+
             ret = msg_funcs[req.cmd_id](connfd);
             
             printf("msg_funcs[%d] ret = %d\n", req.cmd_id, ret);
 
             if (ret < 0)
-                break;
-
-            if (req.cmd_id == CONN_TERM_CMD)
                 break;
         }
 

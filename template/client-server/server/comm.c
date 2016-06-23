@@ -143,7 +143,8 @@ int connection_setup(int sockfd) {
 }
 
 int connection_terminate(int sockfd) {
-    return receive_ctrl_msg(sockfd, CONN_TERM_CMD);
+    return connection_terminate_directly(sockfd);
+    //return receive_ctrl_msg(sockfd, CONN_TERM_CMD);
 }
 
 int connection_terminate_directly(int sockfd) {
