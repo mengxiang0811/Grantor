@@ -1,5 +1,5 @@
-#ifndef __COMMON_H
-#define __COMMON_H
+#ifndef __IC_COMMON_H
+#define __IC_COMMON_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,34 +18,44 @@
 #define BUFF_MAX 1024
 #define PAYLOAD_MAX (1024 * 1024)
 
-typedef int (*handler_func_init)(void);
-typedef int (*handler_func)( int );
-
 /*
  * interactive configuration (IC)
+ * registered modules
+ * */
+enum IC_MODULES_ID {
+    IC_BASIC_MODULE,
+    IC_LPM_MODULE,
+    IC_MODULE_MAX,
+};
+
+/*
+ * IC request commands
  * */
 enum IC_REQ_CMD {
     /* connection management commands */
-    CONN_SETUP_CMD,
-    CONN_TERM_CMD,
+    IC_CONN_SETUP_CMD,
+    IC_CONN_TERM_CMD,
 
     /* LPM rules transfer commands */
-    LPM_FNAME_CMD,
-    LPM_DATA_CMD,
+    IC_LPM_FNAME_CMD,
+    IC_LPM_DATA_CMD,
 
     /* add new request types */
 
     /* indicate the #CMDs */
-    CMD_MAX
+    IC_CMD_MAX,
 };
 
+/*
+ * IC request return status
+ * */
 enum IC_RET_CMD {
     IC_OK,
     IC_ERROR,
 
     /* add new return status */
 
-    IC_MAX,
+    IC_RET_MAX,
 };
 
 struct ic_request {
@@ -60,49 +70,9 @@ struct ic_reply {
     char     *info;
 };
 
-static char *COMPONENT_NAME_MAPPING[CMD_MAX + 1] = {
-    "Connection Setup Component",
-    "Connection Termination Component",
-    "LPM Filename Exchange Component",
-    "LPM Data Transfer Component",
-    "Close Connection Anyway!",
-};
-
-static char *IC_OK_MSG[CMD_MAX * 2] = {
-    /* for control message transfer */
-    "200 OK: Connection Established\n",
-    "200 OK: Closing Connection\n",
-    "200 OK: Valid LPM Rule Filename Controle Message\n",
-    "200 OK: Valid LPM Rule DATA Transfer Control Message\n",
-    
-    /* for data transfer */
-    "200 OK: Connection Established (Never Used!!!)\n",
-    "200 OK: Closing Connection (Never Used!!!)\n",
-    "200 OK: Valid LPM Rule Filename\n",
-    "200 OK: Valid LPM Rule DATA\n",
-};
-
-static char *IC_ERROR_MSG[CMD_MAX + 2] = {
-    "404 ERROR: Invalid Connection Setup Message\n",
-    "404 ERROR: Invalid Connection Termination Message\n",
-    "404 ERROR: Invalid LPM Rule Filename Message\n",
-    "404 ERROR: Invalid LPM Rule DATA Transfer Message\n",
-    "405 ERROR: Not Defined Command\n", //CMD_MAX
-    "406 ERROR: Cannot Receive Message\n", //CMD_MAX + 1
-};
-
 void common_init();
 
 int receive_ctrl_msg(int sockfd, int expected_cmd);
 int receive_data_msg(int sockfd, int data_len);
-
-int connection_setup_init();
-int connection_setup(int sockfd);
-
-int connection_terminate_init();
-int connection_terminate(int sockfd);
-
-int connection_terminate_directly_init();
-int connection_terminate_directly(int sockfd);
 
 #endif

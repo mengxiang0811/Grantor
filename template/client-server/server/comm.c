@@ -1,13 +1,59 @@
 #include "comm.h"
 
-char msg_buff[BUFF_MAX];
 char *message;
+static char msg_buff[BUFF_MAX];
 
 struct ic_request    req;
 static struct ic_reply      *rep;
 
-struct ic_reply IC_OK_REPLY[CMD_MAX * 2];
-struct ic_reply IC_ERROR_REPLY[CMD_MAX + 2];
+struct ic_reply IC_OK_REPLY[IC_CMD_MAX * 2];
+struct ic_reply IC_ERROR_REPLY[IC_CMD_MAX + 2];
+
+static char *IC_OK_MSG[IC_CMD_MAX * 2] = {
+    /* for control message transfer */
+    "200 OK: Connection Established\n",
+    "200 OK: Closing Connection\n",
+    "200 OK: Valid LPM Rule Filename Controle Message\n",
+    "200 OK: Valid LPM Rule DATA Transfer Control Message\n",
+    
+    /* for data transfer */
+    "200 OK: Connection Established (Never Used!!!)\n",
+    "200 OK: Closing Connection (Never Used!!!)\n",
+    "200 OK: Valid LPM Rule Filename\n",
+    "200 OK: Valid LPM Rule DATA\n",
+};
+
+static char *IC_ERROR_MSG[IC_CMD_MAX + 2] = {
+    "404 ERROR: Invalid Connection Setup Message\n",
+    "404 ERROR: Invalid Connection Termination Message\n",
+    "404 ERROR: Invalid LPM Rule Filename Message\n",
+    "404 ERROR: Invalid LPM Rule DATA Transfer Message\n",
+    "405 ERROR: Not Defined Command\n", //IC_CMD_MAX
+    "406 ERROR: Cannot Receive Message\n", //IC_CMD_MAX + 1
+};
+
+void common_init() {
+    int i = 0;
+
+    for (i = 0; i < IC_CMD_MAX * 2; i++) {
+        IC_OK_REPLY[i].status = IC_OK;
+        IC_OK_REPLY[i].length = strlen(IC_OK_MSG[i]);
+        IC_OK_REPLY[i].info   = IC_OK_MSG[i];
+    }
+
+    for (i = 0; i < IC_CMD_MAX + 2; i++) {
+        IC_ERROR_REPLY[i].status = IC_ERROR;
+        IC_ERROR_REPLY[i].length = strlen(IC_ERROR_MSG[i]);
+        IC_ERROR_REPLY[i].info   = IC_ERROR_MSG[i];
+    }
+
+    /* init the data structures */
+    memset(msg_buff, 0, sizeof(msg_buff));
+    message = (char *)calloc((BUFF_MAX + PAYLOAD_MAX), sizeof(char));
+
+    memset(&req, 0, sizeof(struct ic_request));
+    req.data = (char *)calloc((BUFF_MAX + PAYLOAD_MAX), sizeof(char));
+}
 
 static int rcv_process(int sockfd, int recv_size) {
     if (recv_size < 0) {
@@ -18,7 +64,7 @@ static int rcv_process(int sockfd, int recv_size) {
         
         if (send(sockfd, msg_buff, BUFF_MAX, 0) < 0) {
 #endif   
-        if (send(sockfd, IC_ERROR_REPLY[CMD_MAX + 1].info, IC_ERROR_REPLY[CMD_MAX + 1].length, 0) < 0) {
+        if (send(sockfd, IC_ERROR_REPLY[IC_CMD_MAX + 1].info, IC_ERROR_REPLY[IC_CMD_MAX + 1].length, 0) < 0) {
             perror("Send Error: ");
         }
 
@@ -73,10 +119,10 @@ int receive_ctrl_msg(int sockfd, int expected_cmd) {
 
     printf("Receive message: cmd = %u; data length = %u\n", req.cmd_id, req.length);
 
-    if (ret != 2 || req.cmd_id >= CMD_MAX || (expected_cmd != -1 && req.cmd_id != expected_cmd) || req.length >= PAYLOAD_MAX) {
-        int error_id = CMD_MAX + 1;
+    if (ret != 2 || req.cmd_id >= IC_CMD_MAX || (expected_cmd != -1 && req.cmd_id != expected_cmd) || req.length >= PAYLOAD_MAX) {
+        int error_id = IC_CMD_MAX + 1;
 
-        if (req.cmd_id <= CMD_MAX)
+        if (req.cmd_id <= IC_CMD_MAX)
             error_id = req.cmd_id;
 
         if (expected_cmd != -1)
@@ -93,6 +139,10 @@ int receive_ctrl_msg(int sockfd, int expected_cmd) {
     if (send(sockfd, IC_OK_REPLY[req.cmd_id].info, IC_OK_REPLY[req.cmd_id].length, 0) < 0) {
         perror("Send: ");
         return -1;
+    }
+
+    if (req.cmd_id == IC_CONN_TERM_CMD) {
+        printf("Client is asking for terminating the connection!\n");
     }
 
     return 0;
@@ -129,63 +179,11 @@ int receive_data_msg(int sockfd, int data_len) {
     if (file_size != 0)
         return -1;
 
-    printf("receive_data_msg send message = %s\n", IC_OK_REPLY[req.cmd_id + CMD_MAX].info);
-    if (send(sockfd, IC_OK_REPLY[req.cmd_id + CMD_MAX].info, IC_OK_REPLY[req.cmd_id + CMD_MAX].length, 0) < 0) {
+    printf("receive_data_msg send message = %s\n", IC_OK_REPLY[req.cmd_id + IC_CMD_MAX].info);
+    if (send(sockfd, IC_OK_REPLY[req.cmd_id + IC_CMD_MAX].info, IC_OK_REPLY[req.cmd_id + IC_CMD_MAX].length, 0) < 0) {
         perror("Send: ");
         return -1;
     }
 
     return 0;
-}
-
-int connection_setup(int sockfd) {
-    return receive_ctrl_msg(sockfd, CONN_SETUP_CMD);
-}
-
-int connection_terminate(int sockfd) {
-    return connection_terminate_directly(sockfd);
-    //return receive_ctrl_msg(sockfd, CONN_TERM_CMD);
-}
-
-int connection_terminate_directly(int sockfd) {
-    printf("Close the connection directly!\n");
-    close(sockfd);
-    sleep(1);
-
-    return 0;
-}
-
-int connection_setup_init() {
-    return 0;
-}
-
-int connection_terminate_init() {
-    return 0;
-}
-
-int connection_terminate_directly_init() {
-    return 0;
-}
-
-void common_init() {
-    int i = 0;
-
-    for (i = 0; i < CMD_MAX * 2; i++) {
-        IC_OK_REPLY[i].status = IC_OK;
-        IC_OK_REPLY[i].length = strlen(IC_OK_MSG[i]);
-        IC_OK_REPLY[i].info   = IC_OK_MSG[i];
-    }
-
-    for (i = 0; i < CMD_MAX + 2; i++) {
-        IC_ERROR_REPLY[i].status = IC_ERROR;
-        IC_ERROR_REPLY[i].length = strlen(IC_ERROR_MSG[i]);
-        IC_ERROR_REPLY[i].info   = IC_ERROR_MSG[i];
-    }
-
-    /* init the data structures */
-    memset(msg_buff, 0, sizeof(msg_buff));
-    message = (char *)calloc((BUFF_MAX + PAYLOAD_MAX), sizeof(char));
-
-    memset(&req, 0, sizeof(struct ic_request));
-    req.data = (char *)calloc((BUFF_MAX + PAYLOAD_MAX), sizeof(char));
 }

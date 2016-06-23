@@ -1,18 +1,27 @@
 #include "lpm.h"
 
-static struct rule_files rfs;
-
 extern int errno;
 extern char *message;
 extern struct ic_request    req;
+
+static struct rule_files rfs;
+
+static struct ic_component icc_lpm[] = {
+    {IC_LPM_FNAME_CMD, get_lpm_rule_fname, get_lpm_rule_fname_init},
+    {IC_LPM_DATA_CMD, get_lpm_rule_data, get_lpm_rule_data_init},
+};
+
+int ic_lpm_module_init() {
+    return IC_COMPONENT_ARRAY_REGISTER(icc_lpm, IC_COMPONENT_NUM(lpm));
+}
 
 static int rule_files_init(char *directory, struct rule_files *rfiles) {
 
     int err;
     struct stat st;
-    
+
     err = stat(directory, &st);
-    
+
     if (err == 0) {
         if (st.st_mode & S_IFDIR)
             printf("%s is a directory!\n", directory);
@@ -29,7 +38,7 @@ static int rule_files_init(char *directory, struct rule_files *rfiles) {
         if (errno == ENOENT) {
             printf("The directory [%s] does not exist! \
                     Creating new directory...\n", directory);
-            
+
             err = mkdir(directory, S_IRWXU);
 
             if (err != 0) {
@@ -69,6 +78,9 @@ int get_lpm_rule_fname_init() {
 
     memset(&rfs, 0, sizeof(struct rule_files));
 
+    /* no new rule file is updating */
+    rfs.cur_updating_file_idx = -1;
+
     ret = rule_files_init(RULE_FILE_DIR, &rfs);
 
     int i = 0;
@@ -84,6 +96,8 @@ int get_lpm_rule_data_init() {
 }
 
 int get_lpm_rule_fname(int sockfd) {
+
+    int i = 0;
     int ret = -1;
 
     ret = receive_data_msg(sockfd, req.length);
@@ -92,11 +106,27 @@ int get_lpm_rule_fname(int sockfd) {
         return ret;
 
     /* receive the filename correctly, then store filename */
+    char filename[MAX_FNAME_LEN];
+    memset(filename, 0, sizeof(filename));
+    strncpy(filename, RULE_FILE_DIR, strlen(RULE_FILE_DIR));
+    strncpy(filename + strlen(RULE_FILE_DIR), message, req.length);
 
-    strncpy(rfs.fname[rfs.num_active_files], RULE_FILE_DIR, strlen(RULE_FILE_DIR));
-    strncpy(rfs.fname[rfs.num_active_files++] + strlen(RULE_FILE_DIR), message, req.length);
+    for (i = 0; i < rfs.num_active_files; i++) {
+        if (strcmp(rfs.fname[i], filename) == 0) {
+            rfs.cur_updating_file_idx = i;
+            break;
+        }
+    }
 
-    printf("Get new fname: %s\n", rfs.fname[rfs.num_active_files - 1]);
+    if (rfs.cur_updating_file_idx == -1) {
+
+        rfs.cur_updating_file_idx = rfs.num_active_files;
+        strncpy(rfs.fname[rfs.num_active_files++], filename, strlen(filename));
+
+        printf("Get new LPM rule fname: %s\n", rfs.fname[rfs.cur_updating_file_idx]);
+    } else {
+        printf("Updating old LPM rule fname: %s\n", rfs.fname[rfs.cur_updating_file_idx]);
+    }
 
     return 0;
 }
@@ -112,7 +142,12 @@ int get_lpm_rule_data(int sockfd) {
 
     /* TODO: store the data to file*/
 
-    FILE *fp = fopen(rfs.fname[rfs.num_active_files - 1], "w");
+    if (rfs.cur_updating_file_idx == -1) {
+        printf("ERROR: no LPM rule file is waiting for updating!\n");
+        return -1;
+    }
+
+    FILE *fp = fopen(rfs.fname[rfs.cur_updating_file_idx], "w");
 
     if (!fp) {
         printf("ERROR: openning file %s! %s\n", rfs.fname[rfs.num_active_files - 1], strerror(errno));
@@ -130,6 +165,6 @@ int get_lpm_rule_data(int sockfd) {
     }
 
     fclose(fp);
-    
+
     return 0;
 }

@@ -1,12 +1,12 @@
-#ifndef __LPM_H
-#define __LPM_H
+#ifndef __IC_LPM_H
+#define __IC_LPM_H
 
 #include <errno.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "comm.h"
+#include "component.h"
 
 #define MAX_FNAME_LEN       128
 #define MAX_RULE_FILE_NUM   128
@@ -14,6 +14,7 @@
 #define RULE_FILE_DIR       "./rule/"
 
 struct rule_files {
+    int cur_updating_file_idx;
     int num_active_files;
 
     /* file name */
@@ -25,6 +26,8 @@ struct rule_files {
      * */
     time_t file_last_update_time[MAX_RULE_FILE_NUM];
 };
+
+int ic_lpm_module_init();
 
 int get_lpm_rule_fname_init();
 int get_lpm_rule_fname(int sockfd);

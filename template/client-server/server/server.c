@@ -2,16 +2,12 @@
 #include <errno.h>
 #include <sys/types.h>
 
-#include "handler.h"
+#include "modules.h"
 
 extern struct ic_request    req;
-extern handler_func msg_funcs[CMD_MAX + 1];
+extern ic_handler_func msg_funcs[IC_CMD_MAX + 1];
 
-void Close_connection(int sockfd) {
-    printf("close the connect!\n");
-    close(sockfd);
-    sleep(1);
-}
+/* TODO: add signal handler */
 
 int main(int argc, char *argv[]) {
     int listenfd = 0, connfd = 0;
@@ -29,8 +25,8 @@ int main(int argc, char *argv[]) {
 
     port = atoi(argv[1]);
 
-    /* init the handler functions & data structures*/
-    handler_init();
+    /* init the handler functions & data structures of all the modules */
+    modules_init();
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -65,7 +61,7 @@ int main(int argc, char *argv[]) {
             if (ret < 0)
                 break;
 
-            if (req.cmd_id == CONN_TERM_CMD)
+            if (req.cmd_id == IC_CONN_TERM_CMD)
                 goto CONN_TERM_DIRECT;
 
             ret = msg_funcs[req.cmd_id](connfd);
