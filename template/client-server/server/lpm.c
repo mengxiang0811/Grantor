@@ -7,12 +7,16 @@ extern struct ic_request    req;
 static struct rule_files rfs;
 
 static struct ic_component icc_lpm[] = {
-    {IC_LPM_FNAME_CMD, get_lpm_rule_fname, get_lpm_rule_fname_init},
-    {IC_LPM_DATA_CMD, get_lpm_rule_data, get_lpm_rule_data_init},
+    {IC_LPM_FNAME_CMD, get_lpm_rule_fname, get_lpm_rule_fname_init, default_icc_cleanup_func},
+    {IC_LPM_DATA_CMD, get_lpm_rule_data, get_lpm_rule_data_init, default_icc_cleanup_func},
 };
 
 int ic_lpm_module_init() {
     return IC_COMPONENT_ARRAY_REGISTER(icc_lpm, IC_COMPONENT_NUM(lpm));
+}
+
+int ic_lpm_module_cleanup() {
+    return IC_COMPONENT_ARRAY_UNREGISTER(icc_lpm, IC_COMPONENT_NUM(lpm));
 }
 
 static int rule_files_init(char *directory, struct rule_files *rfiles) {
@@ -92,6 +96,7 @@ int get_lpm_rule_fname_init() {
 }
 
 int get_lpm_rule_data_init() {
+    /* TODO: update the LPM rules in Grantor */
     return 0;
 }
 

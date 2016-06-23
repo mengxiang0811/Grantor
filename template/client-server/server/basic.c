@@ -1,13 +1,17 @@
 #include "basic.h"
 
 static struct ic_component icc_basic[] = {
-    {IC_CONN_SETUP_CMD, connection_setup, connection_setup_init},
-    {IC_CONN_TERM_CMD, connection_terminate, connection_terminate_init},
-    {IC_CMD_MAX, connection_terminate_directly, connection_terminate_directly_init},
+    {IC_CONN_SETUP_CMD, connection_setup, default_icc_init_func, default_icc_cleanup_func},
+    {IC_CONN_TERM_CMD, connection_terminate, default_icc_init_func, default_icc_cleanup_func},
+    {IC_CMD_MAX, connection_terminate_directly, default_icc_init_func, default_icc_cleanup_func},
 };
 
 int ic_basic_module_init() {
     return IC_COMPONENT_ARRAY_REGISTER(icc_basic, IC_COMPONENT_NUM(basic));
+}
+
+int ic_basic_module_cleanup() {
+    return IC_COMPONENT_ARRAY_UNREGISTER(icc_basic, IC_COMPONENT_NUM(basic));
 }
 
 int connection_setup(int sockfd) {
@@ -24,17 +28,5 @@ int connection_terminate_directly(int sockfd) {
     close(sockfd);
     sleep(1);
 
-    return 0;
-}
-
-int connection_setup_init() {
-    return 0;
-}
-
-int connection_terminate_init() {
-    return 0;
-}
-
-int connection_terminate_directly_init() {
     return 0;
 }

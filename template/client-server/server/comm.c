@@ -32,7 +32,7 @@ static char *IC_ERROR_MSG[IC_CMD_MAX + 2] = {
     "406 ERROR: Cannot Receive Message\n", //IC_CMD_MAX + 1
 };
 
-void common_init() {
+int common_init() {
     int i = 0;
 
     for (i = 0; i < IC_CMD_MAX * 2; i++) {
@@ -53,6 +53,20 @@ void common_init() {
 
     memset(&req, 0, sizeof(struct ic_request));
     req.data = (char *)calloc((BUFF_MAX + PAYLOAD_MAX), sizeof(char));
+
+    if (!message || !req.data) {
+        printf("ERROR: allocate memory for message buffer!\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+int common_cleanup() {
+    if (message) free(message);
+    if (req.data) free(req.data);
+
+    return 0;
 }
 
 static int rcv_process(int sockfd, int recv_size) {

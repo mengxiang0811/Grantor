@@ -70,7 +70,8 @@ struct ic_reply {
     char     *info;
 };
 
-void common_init();
+int common_init();
+int common_cleanup();
 
 int receive_ctrl_msg(int sockfd, int expected_cmd);
 int receive_data_msg(int sockfd, int data_len);

@@ -28,6 +28,7 @@ struct rule_files {
 };
 
 int ic_lpm_module_init();
+int ic_lpm_module_cleanup();
 
 int get_lpm_rule_fname_init();
 int get_lpm_rule_fname(int sockfd);
