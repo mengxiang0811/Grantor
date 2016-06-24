@@ -10,8 +10,10 @@
 typedef int (*ic_module_init)(void);
 typedef int (*ic_module_cleanup)(void);
 
+/* init all the modules */
 void modules_init();
 
+/* cleanup all the modules */
 void modules_cleanup();
 
 #endif

@@ -1,4 +1,5 @@
 --import the policy data
+--the results can be called by the LPM management lua scripts
 
 local pl_num = 0
 local policies = {}
@@ -15,6 +16,8 @@ function Entry (e)
     prefixes[pl_num] = e["raw"]
 end
 
+--we only need to do the dynamically generated lua script 
+--to load all the policies
 dofile("rules_preproc.lua")
 
 for idx, rule in ipairs(prefixes) do print(rule) end

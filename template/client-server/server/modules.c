@@ -1,20 +1,26 @@
 #include "modules.h"
 
+/* currently, we only implemented the basic module and the lpm module */
+
+/* the module name */
 static char *MODULE_NAME[IC_MODULE_MAX] = {
     "basic",
     "lpm",
 };
 
+/* the description of the module */
 static char *MODULE_DESCRIPTION[IC_MODULE_MAX] = {
     "Basic Module",
     "LPM Module",
 };
 
+/* module init functions */
 ic_module_init  module_init_funcs[IC_MODULE_MAX] = {
     IC_MODULE_INIT_WITH_NAME(basic),
     IC_MODULE_INIT_WITH_NAME(lpm),
 };
 
+/* module cleanup functions */
 ic_module_cleanup  module_cleanup_funcs[IC_MODULE_MAX] = {
     IC_MODULE_CLEANUP_WITH_NAME(basic),
     IC_MODULE_CLEANUP_WITH_NAME(lpm),

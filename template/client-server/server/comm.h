@@ -11,10 +11,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+/* the status of receiving message */
 #define RCV_SUCC    0
 #define RCV_ERROR   1
 #define RCV_DISCON  2
 
+/* the size of the message buffer */
 #define BUFF_MAX 1024
 #define PAYLOAD_MAX (1024 * 1024)
 
@@ -58,22 +60,39 @@ enum IC_RET_CMD {
     IC_RET_MAX,
 };
 
+/* the format of the message */
 struct ic_request {
     uint32_t cmd_id;
     uint32_t length;
     char     *data;
 };
 
+/* the format of the reply message */
 struct ic_reply {
     uint32_t status;
     uint32_t length;
     char     *info;
 };
 
+/* the init & cleanup functions */
 int common_init();
 int common_cleanup();
 
+/* 
+ * generic function to receive any control message
+ *
+ * @sockfd: the socket descriptor
+ * @expected_cmd: the expected REQUEST ID that the server would receive
+ *                  -1 means any REQUEST ID is fine
+ * */
 int receive_ctrl_msg(int sockfd, int expected_cmd);
+
+/*
+ * generic function to receive any message data
+ *
+ * @sockfd: the socket descriptor
+ * @data_len: the length of the receiving data
+ * */
 int receive_data_msg(int sockfd, int data_len);
 
 #endif

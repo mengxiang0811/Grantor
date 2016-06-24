@@ -1,5 +1,12 @@
 #include "lpm.h"
 
+/* 
+ * the lpm module actually does three major jobs:
+ * 1. receive the policy rule file name and data
+ * 2. store the data to the rule file
+ * TODO: 3. call the lua scripts to update the LPM tables (need to be finished)
+ * */
+
 extern int errno;
 extern char *message;
 extern struct ic_request    req;

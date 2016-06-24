@@ -9,6 +9,11 @@ static struct ic_reply      *rep;
 struct ic_reply IC_OK_REPLY[IC_CMD_MAX * 2];
 struct ic_reply IC_ERROR_REPLY[IC_CMD_MAX + 2];
 
+/* 
+ * define the interactive message,
+ * if you need to add new modules and components,
+ * then you need to add the corresponding messages here
+ * */
 static char *IC_OK_MSG[IC_CMD_MAX * 2] = {
     /* for control message transfer */
     "200 OK: Connection Established\n",

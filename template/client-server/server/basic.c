@@ -1,5 +1,10 @@
 #include "basic.h"
 
+/* 
+ * the basic module actually just does the fundmental requests,
+ * e.g., the connection setup, termination, etc.
+ * */
+
 static struct ic_component icc_basic[] = {
     {IC_CONN_SETUP_CMD, connection_setup, default_icc_init_func, default_icc_cleanup_func},
     {IC_CONN_TERM_CMD, connection_terminate, default_icc_init_func, default_icc_cleanup_func},

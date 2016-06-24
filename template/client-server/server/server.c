@@ -5,6 +5,21 @@
 
 #include "modules.h"
 
+/* 
+ * The server process will listen to a UNIX socket, and handle connections.
+ * It could accept only one active connection to avoid dealing with concurrency.
+ *
+ * To process a message, the server will first receive a control message from 
+ * the client, which tells the server the meaning of the following data.
+ *
+ * The format of a typical message is as follows:
+ *      the command id  (control message)
+ *      the length of the message data  (control message)
+ *
+ *      the message data    (the real data to process)
+ * */
+
+
 extern struct ic_request    req;
 extern ic_handler_func msg_funcs[IC_CMD_MAX + 1];
 
@@ -48,6 +63,7 @@ int main(int argc, char *argv[]) {
     /* init the handler functions & data structures of all the modules */
     modules_init();
 
+    /* init the server socket */
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -60,6 +76,7 @@ int main(int argc, char *argv[]) {
 
     listen(listenfd, 20);
 
+    /* add support for signal handling */
     struct sigaction new_action;
     new_action.sa_handler = signal_handler;
     sigemptyset(&new_action.sa_mask);
@@ -75,6 +92,7 @@ int main(int argc, char *argv[]) {
 
         int ret = -1;
 
+        /* setup the connection */
         printf("Accept a new client with socket %d\n", connfd);
         ret = connection_setup(connfd);
 
@@ -84,6 +102,7 @@ int main(int argc, char *argv[]) {
         printf("Connection established!\n");
 
         while (1) {
+            /* to process a message, first, receive the control message */
             ret = receive_ctrl_msg(connfd, -1);
 
             printf("receive_ctrl_msg ret = %d\n", ret);
@@ -94,6 +113,9 @@ int main(int argc, char *argv[]) {
             if (req.cmd_id == IC_CONN_TERM_CMD)
                 goto CONN_TERM_DIRECT;
 
+            /* if the control message is valid for further process,
+             * then process the data by the corresponding component
+             * */
             ret = msg_funcs[req.cmd_id](connfd);
 
             printf("msg_funcs[%d] ret = %d\n", req.cmd_id, ret);
@@ -102,6 +124,7 @@ int main(int argc, char *argv[]) {
                 break;
         }
 
+        /* close the connection */
 CONN_TERM_DIRECT:
         connection_terminate_directly(connfd);
     }
