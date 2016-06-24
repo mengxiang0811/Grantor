@@ -13,4 +13,6 @@ As the design see each feature as a module, one can easily add new modules to th
 * For the server program, it needs to support all the features.
 
 #TODO List
-* Add support for BGP, ARP configuration
+* Add support for BGP configuration
+* Add support for ARP configuration
+* Add support for administrative requests from network operators
