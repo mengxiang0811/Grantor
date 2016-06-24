@@ -3,3 +3,4 @@
 *.raw
 */raw/
 */rule/
+*.dylib

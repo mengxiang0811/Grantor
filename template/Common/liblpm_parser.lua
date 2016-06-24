@@ -4,6 +4,7 @@ This module will do operations about an online filtering list file
 
 local LIBPARSER_MODULE = {}
 
+local fop = require("libfop")
 --[[
 parse LPM rules from string content
 --]]
@@ -42,28 +43,6 @@ end
 parse LPM rules from a file
 --]]
 
---to see if the file exists
-local function file_exists(file)
-    local f = io.open(file, "rb")
-
-    if f then f:close() end
-
-    return f ~= nil
-end
-
---extract the file content as a string
-local function content_from(file)
-    local content = ""
-
-    if not file_exists(file) then return content end
-
-    local f = io.open(file, "rb")
-    content = f:read("*all")
-    f:close()
-
-    return content
-end
-
 --[[
 @file: extracts LPM rules from the given file
 @groupid: the group of bandwidth limit and expiration time
@@ -73,7 +52,7 @@ with the last element specifying the groupid
 --]]
 function LIBPARSER_MODULE.default_ipv4_parser_from_file(file, groupid)
 
-    local content = content_from(file)
+    local content = fop.content_from(file)
 
     local lpm_rules = LIBPARSER_MODULE.default_ipv4_parser(content, groupid)
 

@@ -4,14 +4,27 @@ This module will do operations on an online filtering list file
 
 local LIBURLOP_MODULE = {}
 
+--[[
 local socket = require("socket")
 local http = require("socket.http")
 --TODO: need to support https
 --local https = require("ssl.https")
+--]]
+
+local ffi = require 'ffi'
+local fop = require("libfop")
 local parser = require("liblpm_parser")
 
 --parser to parse LPM rules
 local default_parser = "default_ipv4_parser"
+
+--Declare the C function
+ffi.cdef[[
+int url2file(const char *url, const char *outputfile);
+]]
+
+--ask LuaJIT to load the library that contains the functions
+local download = ffi.load('download')
 
 local function check_params(url, file)
 
@@ -30,6 +43,27 @@ local function check_params(url, file)
     return ret
 end
 
+function LIBURLOP_MODULE.url2file(url, file)
+
+    local ret = check_params(url, file)
+
+    if ret == -1 then
+        return ""
+    end
+
+    print("--->>> Processing url: " .. url)
+
+    ret = download.url2file(url, file)
+
+    if ret ~= 0 then
+        return ""
+    end
+
+    return fop.content_from(file)
+end
+
+--[[
+--use the libcurl instead, it easily supports the https protocol
 --retrieve the content of a URL
 --save the content to file
 function LIBURLOP_MODULE.url2file(url, file)
@@ -59,6 +93,7 @@ function LIBURLOP_MODULE.url2file(url, file)
 
     return body
 end
+--]]
 
 --@file_or_content: the name of the file or the content itself
 --@rule_parser: the name of the chosen LPM rule parser
