@@ -26,4 +26,14 @@ function LIBFOP_MODULE.content_from(file)
     return content
 end
 
+function LIBFOP_MODULE.lines_from(file)
+    lines = {}
+
+    for line in io.lines(file) do 
+        lines[#lines + 1] = line
+    end
+    
+    return lines
+end
+
 return LIBFOP_MODULE

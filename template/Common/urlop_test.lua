@@ -6,6 +6,12 @@ local bogon_url = "http://www.team-cymru.org/Services/Bogons/bogon-bn-agg.txt"
 local spamhaus_url = "https://www.spamhaus.org/drop/drop.txt"
 local cloudflare_url = "https://www.cloudflare.com/ips-v4"
 
+local spamhaus_url_v6 = "https://www.spamhaus.org/drop/dropv6.txt"
+print("####################################")
+urlop.url2file(spamhaus_url_v6, "dropv6.txt")
+local spamhaus_rules_v6 = urlop.parse("dropv6.txt", "default_ipv6_parser_from_file", 2)
+urlop.print_parsed_rules(spamhaus_rules_v6)
+
 --bogon list from cotent
 print("####################################")
 local bogon_content = urlop.url2file(bogon_url, "bogon.txt")

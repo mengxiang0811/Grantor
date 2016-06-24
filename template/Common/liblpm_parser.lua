@@ -59,4 +59,76 @@ function LIBPARSER_MODULE.default_ipv4_parser_from_file(file, groupid)
     return lpm_rules
 end
 
+--need to do line by line
+function LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
+    local lpm_rule = {}
+
+    if line == nil or line == "" then
+        print("Cannot parse LPM rules, the cotent is empty!")
+        return lpm_rule
+    end
+
+    --print(line)
+
+    local i = 8
+
+    local content = ""
+
+    while i >= 1 do
+
+        local str = ("([a-fA-F0-9]*)%:"):rep(i):gsub(":$","")
+        str = "^".. str .. "/(%d+)"
+
+        --print(str)
+
+        local chunks = {line:match(str)}
+
+        if chunks ~= nil and #chunks ~= 0 then
+
+            local size = #chunks
+
+            for _,v in pairs(chunks) do
+                if size == #chunks then
+                    content = v
+                elseif (size > 1) then
+                    content = content .. ":" .. v
+                else
+                    content = content .. "/" .. v
+                end
+
+                size = size - 1
+            end
+
+            lpm_rule = {["raw"] = content, ["prefix"] = chunks[#chunks]}
+
+            return lpm_rule
+        end
+
+        i = i - 1
+
+    end
+
+    return lpm_rule
+end
+
+function LIBPARSER_MODULE.default_ipv6_parser_from_file(file, groupid)
+
+    local lpm_rules = {}
+
+    local lines = fop.lines_from(file)
+
+    for _,line in pairs(lines) do
+        local lpm_rule = LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
+
+        if lpm_rule["raw"] ~= nil then
+            lpm_rules[#lpm_rules + 1] = lpm_rule
+        end
+    end
+
+    lpm_rules["group"] = groupid
+    lpm_rules["proto"] = "IPv6"
+
+    return lpm_rules
+end
+
 return LIBPARSER_MODULE
