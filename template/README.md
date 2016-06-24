@@ -33,7 +33,3 @@ libpolicy.policy_start(policy_config) --function to start the policy
 
 *   Add parsers for IPv6
 *   Integrate with the DPDK LPM component, and the Interactive Configuration component
-
-#Known Issues
-
-*   The CloudFlare policy script cannot download the file, which always returns status code 301 without any filtering list content. This may be caused by the facts using *https*. However, the Spamhaus policy also use *https* protocol, and it can download the content correctly. (Solved by libcurl)
