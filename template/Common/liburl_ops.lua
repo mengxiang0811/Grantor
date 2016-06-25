@@ -16,7 +16,8 @@ local fop = require("libfop")
 local parser = require("liblpm_parser")
 
 --parser to parse LPM rules
-local default_parser = "default_ipv4_parser"
+local default_ipv4_parser = "default_ipv4_parser"
+local default_ipv6_parser = "default_ipv6_parser"
 
 --Declare the C function
 ffi.cdef[[
@@ -102,7 +103,7 @@ function LIBURLOP_MODULE.parse(file_or_content, rule_parser, groupid)
     --parse the file to extract LPM rules
     if rule_parser == nil or parser[rule_parser] == nil then 
         print("###### Invalid parser, using the default_ipv4_parser!")
-        rule_parser = default_parser
+        rule_parser = default_ipv4_parser
     end
 
     return parser[rule_parser](file_or_content, groupid)
@@ -115,7 +116,7 @@ function LIBURLOP_MODULE.print_parsed_rules(rules)
         if i == "group" or i == "proto" then
             io.write(i, ': ', v, '\n')
         else
-            io.write(i, ': ', v["raw"], '\n')
+            io.write(i, ': raw = ', v["raw"], ";\tip = ", v["ip"], '\n')
         end
     end
 
@@ -129,7 +130,7 @@ function LIBURLOP_MODULE.rules2file(rules, file)
     end
     -- save the content to a file
     local f = assert(io.open(file, 'wb')) -- open in "binary" mode
-    
+
     for i,v in pairs(rules) do
 
         if i ~= "group" and i ~= "proto" then

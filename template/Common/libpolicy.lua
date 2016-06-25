@@ -107,9 +107,11 @@ function LIBPOLICY_MODULE.policy_schedule(policy)
                 print("******update URL: " .. url["link"])
 
                 --download the file specified by the url, and save it to the raw data directory
-                local content = urlop.url2file(url["link"], policy["raw_dir"] .. "/" .. url["filename"] .. ".raw")
+                --local content = urlop.url2file(url["link"], policy["raw_dir"] .. "/" .. url["filename"] .. ".raw")
+                urlop.url2file(url["link"], policy["raw_dir"] .. "/" .. url["filename"] .. ".raw")
                 --parse the content to LPM rules
-                local rules = urlop.parse(content, url["parser"], url["group"])
+                --local rules = urlop.parse(content, url["parser"], url["group"])
+                local rules = urlop.parse(policy["raw_dir"] .. "/" .. url["filename"] .. ".raw", url["parser"], url["group"])
                 --print the rules out, and verify the correctness of the LPM rules.
                 --for debug purpose
                 urlop.print_parsed_rules(rules)

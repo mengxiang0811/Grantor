@@ -16,7 +16,7 @@ parse LPM rules from string content
 @return value: the function returns the LPM rules table
 with the last element specifying the groupid
 --]]
-function LIBPARSER_MODULE.default_ipv4_parser(content, groupid)
+function LIBPARSER_MODULE.default_ipv4_parser_from_string(content, groupid)
     local lpm_rules = {}
 
     if content == nil or content == "" then
@@ -28,8 +28,9 @@ function LIBPARSER_MODULE.default_ipv4_parser(content, groupid)
 
     for rule in string.gmatch(content, "%d+%.%d+%.%d+%.%d+%/%d+") do
         local o1,o2,o3,o4,len = rule:match("(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%/(%d+)")
-        local ip = 2^24*o1 + 2^16*o2 + 2^8*o3 + o4
+        --local ip = 2^24*o1 + 2^16*o2 + 2^8*o3 + o4
 
+        local ip = o1 .. "." .. o2 .. "." .. o3 .. "." .. o4
         lpm_rules[#lpm_rules + 1] = {["raw"] = rule, ["ip"] = ip, ["prefix"] = len}
     end
 
@@ -50,17 +51,17 @@ parse LPM rules from a file
 @return value: the function returns the LPM rules table 
 with the last element specifying the groupid
 --]]
-function LIBPARSER_MODULE.default_ipv4_parser_from_file(file, groupid)
+function LIBPARSER_MODULE.default_ipv4_parser(file, groupid)
 
     local content = fop.content_from(file)
 
-    local lpm_rules = LIBPARSER_MODULE.default_ipv4_parser(content, groupid)
+    local lpm_rules = LIBPARSER_MODULE.default_ipv4_parser_from_string(content, groupid)
 
     return lpm_rules
 end
 
 --need to do line by line
-function LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
+function LIBPARSER_MODULE.default_ipv6_parser_from_string(line, groupid)
     local lpm_rule = {}
 
     if line == nil or line == "" then
@@ -68,11 +69,12 @@ function LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
         return lpm_rule
     end
 
-    --print(line)
+    print(line)
 
     local i = 8
 
     local content = ""
+    local ip6 = ""
 
     while i >= 1 do
 
@@ -88,18 +90,25 @@ function LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
             local size = #chunks
 
             for _,v in pairs(chunks) do
+                
+                local chunk = (("0"):rep(4 - #v)) .. v
+
                 if size == #chunks then
+                    ip6 = chunk
                     content = v
                 elseif (size > 1) then
+                    ip6 = ip6 .. ":" .. chunk
                     content = content .. ":" .. v
                 else
+                    ip6 = ip6 .. ((":0000"):rep(9 - #chunks))
+                    ip6 = ip6 .. "/" .. v
                     content = content .. "/" .. v
                 end
 
                 size = size - 1
             end
 
-            lpm_rule = {["raw"] = content, ["prefix"] = chunks[#chunks]}
+            lpm_rule = {["raw"] = content, ["ip"] = ip6, ["prefix"] = chunks[#chunks]}
 
             return lpm_rule
         end
@@ -111,14 +120,14 @@ function LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
     return lpm_rule
 end
 
-function LIBPARSER_MODULE.default_ipv6_parser_from_file(file, groupid)
+function LIBPARSER_MODULE.default_ipv6_parser(file, groupid)
 
     local lpm_rules = {}
 
     local lines = fop.lines_from(file)
 
     for _,line in pairs(lines) do
-        local lpm_rule = LIBPARSER_MODULE.default_ipv6_parser(line, groupid)
+        local lpm_rule = LIBPARSER_MODULE.default_ipv6_parser_from_string(line, groupid)
 
         if lpm_rule["raw"] ~= nil then
             lpm_rules[#lpm_rules + 1] = lpm_rule

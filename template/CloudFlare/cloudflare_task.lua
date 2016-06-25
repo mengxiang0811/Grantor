@@ -31,7 +31,7 @@ local policy_config = {
             ["group"] = 2,
             ["proto"] = "IPv6",
             ["parser"] = "default_ipv6_parser",
-            ["state"] = "unused",
+            ["state"] = "used",
             ["filename"] = "cloudflare-ips-v6",
             ["desc"] = [[The definitive source of CloudFlare’s current IPv6 ranges.]],
         },
